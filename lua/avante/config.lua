@@ -9,8 +9,8 @@ local M = {}
 M.defaults = {
   debug = false,
   ---@alias Provider "claude" | "openai" | "azure" | "gemini" | "vertex" | "cohere" | "copilot" | string
-  provider = "claude", -- Only recommend using Claude
-  auto_suggestions_provider = "claude",
+  provider = "openai", -- Only recommend using OpenAI
+  auto_suggestions_provider = "openai",
   ---@alias Tokenizer "tiktoken" | "hf"
   -- Used for counting tokens and encoding text.
   -- By default, we will use tiktoken.

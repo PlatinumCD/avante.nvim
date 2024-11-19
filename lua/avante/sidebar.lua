@@ -642,7 +642,7 @@ end
 
 function Sidebar:render_result()
   if not self.result or not self.result.bufnr or not api.nvim_buf_is_valid(self.result.bufnr) then return end
-  local header_text = "󰭻 Avante"
+  local header_text = "Avante"
   self:render_header(self.result.winid, self.result.bufnr, header_text, Highlights.TITLE, Highlights.REVERSED_TITLE)
 end
 
@@ -671,7 +671,7 @@ function Sidebar:render_input(ask)
   local code_file_fullpath = api.nvim_buf_get_name(self.code.bufnr)
   local code_filename = fn.fnamemodify(code_file_fullpath, ":t")
   local header_text = string.format(
-    "󱜸 %s %s %s (" .. Config.mappings.sidebar.switch_windows .. ": switch focus)",
+    "%s %s %s (" .. Config.mappings.sidebar.switch_windows .. ": switch focus)",
     ask and "Ask" or "Chat with",
     icon,
     code_filename
@@ -679,9 +679,7 @@ function Sidebar:render_input(ask)
 
   if self.code.selection ~= nil then
     header_text = string.format(
-      "󱜸 %s %s %s(%d:%d) (<Tab>: switch focus)",
-      ask and "Ask" or "Chat with",
-      icon,
+      " %s(%d:%d) (<Tab>: switch focus)",
       code_filename,
       self.code.selection.range.start.line,
       self.code.selection.range.finish.line
@@ -710,7 +708,7 @@ function Sidebar:render_selected_code()
     selected_code_lines_count = #selected_code_lines
   end
 
-  local header_text = " Selected Code"
+  local header_text = "Selected Text"
     .. (
       selected_code_lines_count > selected_code_max_lines_count
         and " (Show only the first " .. tostring(selected_code_max_lines_count) .. " lines)"
@@ -1105,11 +1103,11 @@ local function get_timestamp() return os.date("%Y-%m-%d %H:%M:%S") end
 local function render_chat_record_prefix(timestamp, provider, model, request, selected_file, selected_code)
   provider = provider or "unknown"
   model = model or "unknown"
-  local res = "- Datetime: " .. timestamp .. "\n\n" .. "- Model: " .. provider .. "/" .. model
-  if selected_file ~= nil then res = res .. "\n\n- Selected file: " .. selected_file.filepath end
+  local res = "- Model: " .. provider .. "/" .. model
+  if selected_file ~= nil then res = res .. "\n- File: " .. selected_file.filepath end
   if selected_code ~= nil then
     res = res
-      .. "\n\n- Selected code: "
+      .. "\n\n- Text: "
       .. "\n\n```"
       .. selected_code.filetype
       .. "\n"
@@ -1442,7 +1440,7 @@ function Sidebar:create_input(opts)
       self:update_content(
         content_prefix
           .. displayed_response
-          .. "\n\n**Generation complete!** Please review the code suggestions above.\n",
+          .. "\n\n",
         {
           scroll = true,
           callback = function() api.nvim_exec_autocmds("User", { pattern = VIEW_BUFFER_UPDATED_PATTERN }) end,
