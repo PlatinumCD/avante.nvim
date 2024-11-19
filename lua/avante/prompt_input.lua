@@ -127,7 +127,7 @@ function PromptInput:close()
   self:close_shortcuts_hints()
   if api.nvim_get_mode().mode == "i" then vim.cmd([[stopinsert]]) end
   if self.winid and api.nvim_win_is_valid(self.winid) then
-    api.nvim_win_close(self.winid, true)
+    pcall(api.nvim_win_close, self.winid, true)
     self.winid = nil
   end
   if self.bufnr and api.nvim_buf_is_valid(self.bufnr) then
