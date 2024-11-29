@@ -8,7 +8,10 @@
     <img src="https://img.shields.io/static/v1?style=flat-square&label=Neovim&message=v0.10%2b&logo=neovim&labelColor=282828&logoColor=8faa80&color=414b32" alt="Neovim: v0.10+" />
   </a>
   <a href="https://github.com/yetone/avante.nvim/actions/workflows/ci.yaml" target="_blank">
-    <img src="https://img.shields.io/github/actions/workflow/status/yetone/avante.nvim/ci.yaml?style=flat-square&logo=github&logoColor=c7c7c7&label=CI&labelColor=282828&color=347D39&event=push" alt="CI status" />
+    <img src="https://img.shields.io/github/actions/workflow/status/yetone/avante.nvim/lua.yaml?style=flat-square&logo=lua&logoColor=c7c7c7&label=Lua+CI&labelColor=282828&color=347D39&event=push" alt="Lua CI status" />
+  </a>
+  <a href="https://github.com/yetone/avante.nvim/actions/workflows/ci.yaml" target="_blank">
+    <img src="https://img.shields.io/github/actions/workflow/status/yetone/avante.nvim/rust.yaml?style=flat-square&logo=rust&logoColor=c7c7c7&label=Rust+CI&labelColor=282828&color=347D39&event=push" alt="Rust CI status" />
   </a>
   <a href="https://discord.com/invite/wUuZz7VxXD" target="_blank">
     <img src="https://img.shields.io/discord/1302530866362323016?style=flat-square&logo=discord&label=Discord&logoColor=ffffff&labelColor=7376CF&color=268165" alt="Discord" />
@@ -54,11 +57,11 @@ For building binary if you wish to build from source, then `cargo` is required. 
   build = "make",
   -- build = "powershell -ExecutionPolicy Bypass -File Build.ps1 -BuildFromSource false" -- for windows
   dependencies = {
-    "nvim-treesitter/nvim-treesitter",
     "stevearc/dressing.nvim",
     "nvim-lua/plenary.nvim",
     "MunifTanjim/nui.nvim",
     --- The below dependencies are optional,
+    "hrsh7th/nvim-cmp", -- autocompletion for avante commands and mentions
     "nvim-tree/nvim-web-devicons", -- or echasnovski/mini.icons
     "zbirenbaum/copilot.lua", -- for providers='copilot'
     {
@@ -104,6 +107,7 @@ Plug 'nvim-lua/plenary.nvim'
 Plug 'MunifTanjim/nui.nvim'
 
 " Optional deps
+Plug "hrsh7th/nvim-cmp"
 Plug 'nvim-tree/nvim-web-devicons' "or Plug 'echasnovski/mini.icons'
 Plug 'HakonHarnes/img-clip.nvim'
 Plug 'zbirenbaum/copilot.lua'
@@ -112,6 +116,7 @@ Plug 'zbirenbaum/copilot.lua'
 Plug 'yetone/avante.nvim', { 'branch': 'main', 'do': 'make' }
 autocmd! User avante.nvim lua << EOF
 require('avante_lib').load()
+require('avante').setup()
 EOF
 ```
 
@@ -136,6 +141,7 @@ add({
   hooks = { post_checkout = function() vim.cmd('make') end }
 })
 --- optional
+add({ source = 'hrsh7th/nvim-cmp' })
 add({ source = 'zbirenbaum/copilot.lua' })
 add({ source = 'HakonHarnes/img-clip.nvim' })
 add({ source = 'MeanderingProgrammer/render-markdown.nvim' })
@@ -157,6 +163,9 @@ end)
 
 ```lua
 -- deps:
+require('cmp').setup ({
+  -- use recommended settings from above
+})
 require('img-clip').setup ({
   -- use recommended settings from above
 })
@@ -230,6 +239,7 @@ _See [config.lua#L9](./lua/avante/config.lua) for the full config_
     auto_set_keymaps = true,
     auto_apply_diff_after_generation = false,
     support_paste_from_clipboard = false,
+    minimize_diff = true, -- Whether to remove unchanged lines when applying a code block
   },
   mappings = {
     --- @class AvanteConflictMappings
@@ -413,7 +423,7 @@ Users can customize the system prompts via `Config.system_prompt`. We recommend 
 
 ```lua
 vim.api.nvim_create_autocmd("User", {
-  pattern = "ToggleMyPrompt"
+  pattern = "ToggleMyPrompt",
   callback = function() require("avante.config").override({system_prompt = "MY CUSTOM SYSTEM PROMPT"}) end,
 })
 
