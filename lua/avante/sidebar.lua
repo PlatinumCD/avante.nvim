@@ -1456,27 +1456,27 @@ function Sidebar:create_selected_code_container()
 
   local selected_code_size = self:get_selected_code_size()
 
-  if self.code.selection ~= nil then
-    self.selected_code_container = Split({
-      enter = false,
-      relative = {
-        type = "win",
-        winid = self.input_container.winid,
-      },
-      buf_options = buf_options,
-      size = {
-        height = selected_code_size + 3,
-      },
-      position = "top",
-    })
-    self.selected_code_container:mount()
-    if self:get_layout() == "horizontal" then
-      api.nvim_win_set_height(
-        self.result_container.winid,
-        api.nvim_win_get_height(self.result_container.winid) - selected_code_size - 3
-      )
-    end
-  end
+--  if self.code.selection ~= nil then
+--    self.selected_code_container = Split({
+--      enter = false,
+--      relative = {
+--        type = "win",
+--        winid = self.input_container.winid,
+--      },
+--      buf_options = buf_options,
+--      size = {
+--        height = selected_code_size + 3,
+--      },
+--      position = "top",
+--    })
+--    self.selected_code_container:mount()
+--    if self:get_layout() == "horizontal" then
+--      api.nvim_win_set_height(
+--        self.result_container.winid,
+--        api.nvim_win_get_height(self.result_container.winid) - selected_code_size - 3
+--      )
+--    end
+--  end
 end
 
 local generating_text = "**Generating response ...**\n"
