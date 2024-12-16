@@ -14,7 +14,7 @@ endif
 LUA_VERSIONS := luajit lua51
 
 BUILD_DIR := build
-BUILD_FROM_SOURCE ?= false
+BUILD_FROM_SOURCE ?= true
 TARGET_LIBRARY ?= all
 
 all: luajit
