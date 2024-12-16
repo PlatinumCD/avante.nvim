@@ -2063,7 +2063,7 @@ function Sidebar:create_selected_files_container()
     self:render_header(
       self.selected_files_container.winid,
       selected_files_buf,
-      " Selected Files",
+      "Selected Files",
       Highlights.SUBTITLE,
       Highlights.REVERSED_SUBTITLE
     )
