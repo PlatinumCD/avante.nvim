@@ -44,14 +44,11 @@ M._stream = function(opts, Provider)
 
   Path.prompts.initialize(Path.prompts.get(opts.bufnr))
 
-  local filepath = Utils.relative_path(api.nvim_buf_get_name(opts.bufnr))
-
   local template_opts = {
     use_xml_format = Provider.use_xml_format,
     ask = opts.ask, -- TODO: add mode without ask instruction
     code_lang = opts.code_lang,
-    filepath = filepath,
-    file_content = opts.file_content,
+    selected_files = opts.selected_files,
     selected_code = opts.selected_code,
     project_context = opts.project_context,
     diagnostics = opts.diagnostics,
@@ -72,8 +69,10 @@ M._stream = function(opts, Provider)
     if diagnostics ~= "" then table.insert(messages, { role = "user", content = diagnostics }) end
   end
 
-  local code_context = Path.prompts.render_file("_context.avanterules", template_opts)
-  if code_context ~= "" then table.insert(messages, { role = "user", content = code_context }) end
+  if #opts.selected_files > 0 or opts.selected_code ~= nil then
+    local code_context = Path.prompts.render_file("_context.avanterules", template_opts)
+    if code_context ~= "" then table.insert(messages, { role = "user", content = code_context }) end
+  end
 
   if opts.use_xml_format then
     table.insert(messages, { role = "user", content = string.format("<question>%s</question>", instructions) })
@@ -155,6 +154,7 @@ M._stream = function(opts, Provider)
     proxy = spec.proxy,
     insecure = spec.insecure,
     body = curl_body_file,
+    raw = spec.rawArgs,
     stream = function(err, data, _)
       if err then
         completed = true
@@ -334,14 +334,19 @@ end
 
 ---@alias LlmMode "planning" | "editing" | "suggesting"
 ---
+---@class SelectedFiles
+---@field path string
+---@field content string
+---@field file_type string
+---
 ---@class TemplateOptions
 ---@field use_xml_format boolean
 ---@field ask boolean
 ---@field question string
 ---@field code_lang string
----@field file_content string
 ---@field selected_code string | nil
 ---@field project_context string | nil
+---@field selected_files SelectedFiles[] | nil
 ---@field diagnostics string | nil
 ---@field history_messages AvanteLLMMessage[]
 ---
@@ -356,8 +361,22 @@ end
 
 ---@param opts StreamOptions
 M.stream = function(opts)
-  if opts.on_chunk ~= nil then opts.on_chunk = vim.schedule_wrap(opts.on_chunk) end
-  if opts.on_complete ~= nil then opts.on_complete = vim.schedule_wrap(opts.on_complete) end
+  local is_completed = false
+  if opts.on_chunk ~= nil then
+    local original_on_chunk = opts.on_chunk
+    opts.on_chunk = vim.schedule_wrap(function(chunk)
+      if is_completed then return end
+      return original_on_chunk(chunk)
+    end)
+  end
+  if opts.on_complete ~= nil then
+    local original_on_complete = opts.on_complete
+    opts.on_complete = vim.schedule_wrap(function(err)
+      if is_completed then return end
+      is_completed = true
+      return original_on_complete(err)
+    end)
+  end
   local Provider = opts.provider or P[Config.provider]
   if Config.dual_boost.enabled then
     M._dual_boost_stream(opts, Provider, P[Config.dual_boost.first_provider], P[Config.dual_boost.second_provider])

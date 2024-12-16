@@ -21,6 +21,7 @@ M.defaults = {
   openai = {
     endpoint = "https://api.openai.com/v1",
     model = "gpt-4o",
+    -- model = "o1-mini",
     timeout = 30000, -- Timeout in milliseconds
     temperature = 0,
     max_tokens = 4096,
@@ -186,6 +187,11 @@ M.defaults = {
       apply_cursor = "a",
       switch_windows = "<Tab>",
       reverse_switch_windows = "<S-Tab>",
+      remove_file = "d",
+      add_file = "@",
+    },
+    files = {
+      add_current = "<leader>ac", -- Add current buffer to selected files
     },
   },
   windows = {
@@ -231,6 +237,13 @@ M.defaults = {
   repo_map = {
     ignore_patterns = { "%.git", "%.worktree", "__pycache__", "node_modules" }, -- ignore files matching these
     negate_patterns = {}, -- negate ignore files matching these.
+  },
+  --- @class AvanteFileSelectorConfig
+  --- @field provider "native" | "fzf" | "telescope"
+  file_selector = {
+    provider = "native",
+    -- Options override for custom providers
+    provider_opts = {},
   },
 }
 
