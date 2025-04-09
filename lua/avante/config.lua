@@ -20,11 +20,11 @@ local M = {}
 M._defaults = {
   debug = false,
   ---@alias avante.ProviderName "claude" | "openai" | "azure" | "gemini" | "vertex" | "cohere" | "copilot" | "bedrock" | "ollama" | string
-  provider = "claude",
+  provider = "openai",
   -- WARNING: Since auto-suggestions are a high-frequency operation and therefore expensive,
   -- currently designating it as `copilot` provider is dangerous because: https://github.com/yetone/avante.nvim/issues/1048
   -- Of course, you can reduce the request frequency by increasing `suggestion.debounce`.
-  auto_suggestions_provider = "claude",
+  auto_suggestions_provider = "openai",
   cursor_applying_provider = nil,
   memory_summary_provider = nil,
   ---@alias Tokenizer "tiktoken" | "hf"
@@ -442,7 +442,7 @@ M._defaults = {
     ---@alias AvantePosition "right" | "left" | "top" | "bottom" | "smart"
     position = "right",
     wrap = true, -- similar to vim.o.wrap
-    width = 30, -- default % based on available width in vertical layout
+    width = 40, -- default % based on available width in vertical layout
     height = 30, -- default % based on available height in horizontal layout
     sidebar_header = {
       enabled = true, -- true, false to enable/disable the header
